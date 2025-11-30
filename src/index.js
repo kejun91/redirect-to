@@ -1,6 +1,7 @@
 /**
  * Cloudflare Worker to redirect to URLs passed in the path
  * Usage: https://worker.dev/https://example.com/path?query=value#hash
+ * Supports any URL scheme (http://, https://, file://, etc.)
  */
 
 export default {
@@ -15,21 +16,10 @@ export default {
       // If no URL is provided, return usage instructions
       if (!targetUrl) {
         return new Response(
-          'Usage: https://your-worker.dev/https://example.com/path?query=value#hash\n\n' +
+          `Usage: https://${url.host}/https://example.com/path?query=value#hash\n\n` +
           'The worker will redirect to the URL you provide after the domain.',
           {
             status: 200,
-            headers: { 'Content-Type': 'text/plain' }
-          }
-        );
-      }
-      
-      // Validate that the target starts with http:// or https://
-      if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
-        return new Response(
-          'Error: URL must start with http:// or https://',
-          {
-            status: 400,
             headers: { 'Content-Type': 'text/plain' }
           }
         );
